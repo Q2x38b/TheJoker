@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Joker Presentation</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: white;
+    }
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .slide.active {
+      opacity: 1;
+    }
+    .photo-placeholder {
+      width: 80%;
+      height: 80%;
+      border: 2px dashed #555;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* Remove the text below if you want a completely blank area */
+      font-size: 1.5em;
+      color: #555;
+    }
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      z-index: 1000;
+    }
+    button {
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #444;
+    }
+    .progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      background: #666;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <div id="presentation">
+    <!-- Slide 1: Photo Placeholder -->
+    <div class="slide">
+      <div class="photo-placeholder"><img src="Slide1.png" alt="Slide1"></div>
+    </div>
+    
+    <!-- Slide 2: Photo Placeholder -->
+    <div class="slide">
+      <div class="photo-placeholder"><img src="Slide2.png" alt="Slide2"></div>
+    </div>
+    
+    <!-- Slide 3: Photo Placeholder -->
+    <div class="slide">
+      <div class="photo-placeholder"><img src="Slide3.png" alt="Slide3"></div>
+    </div>
+    
+    <!-- Slide 4: Photo Placeholder -->
+    <div class="slide">
+      <div class="photo-placeholder"><img src="Slide4.png" alt="Slide4"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="prevSlide()">Previous</button>
+    <button onclick="nextSlide()">Next</button>
+    <button onclick="toggleFullscreen()">Fullscreen</button>
+  </div>
+
+  <div class="progress" id="progress"></div>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    
+    function showSlide(index) {
+      slides.forEach(slide => slide.classList.remove('active'));
+      slides[index].classList.add('active');
+      
+      // Update progress bar
+      const progress = ((index + 1) / slides.length) * 100;
+      document.getElementById('progress').style.width = progress + '%';
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+      if (e.key === 'f') toggleFullscreen();
+    });
+
+    // Touch navigation
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.touches[0].clientX;
+    });
+    document.addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) nextSlide();
+        else prevSlide();
+      }
+    });
+
+    // Initialize first slide
+    showSlide(0);
+  </script>
+</body>
+</html>
